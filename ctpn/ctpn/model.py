@@ -31,8 +31,7 @@ def load_tf_model():
     saver = tf.train.Saver()
     # sess = tf.Session(config=config)
     sess = tf.Session()
-    ckpt = tf.train.get_checkpoint_state(
-        'F:\\CHINESE-OCR-master\\ctpn\\checkpoints')
+    ckpt = tf.train.get_checkpoint_state('ctpn/checkpoints')
     reader = tf.train.NewCheckpointReader(ckpt.model_checkpoint_path)
     var_to_shape_map = reader.get_variable_to_shape_map()
     for key in var_to_shape_map:

@@ -11,7 +11,7 @@ import time
 # sys.path.append("keras_crnn")
 from angle.predict import predict as angle_detect  ##文字方向检测
 
-from torch_crnn.crnn import crnnOcr
+from torch_crnn.crnn import crnnOcr,crnnOcr1
 
 from ctpn.text_detect import text_detect
 from keras_crnn.model import predict as ocr
@@ -59,7 +59,7 @@ def crnnRec(im, text_recs, ocrMode, adjust=False):
         if ocrMode == 'pytorch':
             sim_pred = crnnOcr(image)
 
-        results[index].append(sim_pred)  ##识别文字
+        results[index].append(sim_pred)  # 识别文字
 
     return results
 

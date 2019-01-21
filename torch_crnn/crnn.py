@@ -81,3 +81,41 @@ def crnnOcr(image):
             sim_pred = sim_pred[1:]
 
     return sim_pred
+
+def crnnOcr1(image):
+    """
+    crnn模型，ocr识别
+    @@model,
+    @@converter,
+    @@im
+    @@text_recs:text box
+
+    """
+    alphabet = keys_crnn.alphabet
+    converter = util.strLabelConverter(alphabet)
+    model = crnn.CRNN(32, 1, len(alphabet) + 1, 256, 1)
+    path = './torch_crnn/samples/model_acc97.pth'
+    model.eval()
+    model.load_state_dict(torch.load(path))
+
+    scale = image.size[1] * 1.0 / 32
+    w = image.size[0] / scale
+    w = int(w)
+    # print "im size:{},{}".format(image.size,w)
+    transformer = dataset.resizeNormalize((w, 32))
+
+    image2 = transformer(image)
+
+    image2 = image2.view(1, *image2.size())
+    image2 = Variable(image2)
+    model.eval()
+    preds = model(image2)
+    _, preds = preds.max(2)
+    preds = preds.transpose(1, 0).contiguous().view(-1)
+    preds_size = Variable(torch.IntTensor([preds.size(0)]))
+    sim_pred = converter.decode(preds.data, preds_size.data, raw=False)
+    if len(sim_pred) > 0:
+        if sim_pred[0] == u'-':
+            sim_pred = sim_pred[1:]
+
+    return sim_pred

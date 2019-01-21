@@ -19,7 +19,7 @@ def load():
     trained_model = tf.keras.models.Model(inputs=vgg.input, outputs=prediction)
     sgd = tf.keras.optimizers.SGD(lr=0.00001, momentum=0.9)
     trained_model.compile(optimizer=sgd, loss='categorical_crossentropy', metrics=['accuracy'])
-    trained_model.load_weights('F:\\CHINESE-OCR-master\\angle\\modelAngle.h5')
+    trained_model.load_weights('./modelAngle.h5')
     return trained_model
 
 

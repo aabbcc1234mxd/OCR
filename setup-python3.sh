@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 source activate base
 #conda create -n chinese-ocr3 python=3.6 pip scipy numpy Pillow jupyter
 #source activate chinese-ocr3
