@@ -7,14 +7,14 @@ import numpy as np
 from PIL import Image
 # import sys
 import time
-
-# sys.path.append("keras_crnn")
+import torch
+from crnn1.models import crnn as crnn
 from angle.predict import predict as angle_detect  ##文字方向检测
-
-from torch_crnn.crnn import crnnOcr,crnnOcr1
-
+from torch_crnn.crnn import crnnOcr
+from crnn1 import test
+from crnn1 import utils
 from ctpn.text_detect import text_detect
-from keras_crnn.model import predict as ocr
+from crnn1 import alphabets
 
 
 def crnnRec(im, text_recs, ocrMode, adjust=False):
@@ -29,6 +29,16 @@ def crnnRec(im, text_recs, ocrMode, adjust=False):
     index = 0
     results = {}
     xDim, yDim = im.shape[1], im.shape[0]
+
+    # crnn network
+    crnn_model_path = 'crnn1/trained_models/mixed_second_finetune_acc97p7.pth'
+    tmodel = crnn.CRNN(imgH=32, nc=1, nclass=len(alphabets.alphabet)+1, nh=256)
+    if torch.cuda.is_available():
+        tmodel = tmodel.cuda()
+    print('loading pre trained model from {0}'.format(crnn_model_path))
+    # 导入已经训练好的crnn模型
+    tmodel.load_state_dict(torch.load(crnn_model_path))
+    converter = utils.strLabelConverter(alphabets.alphabet)
 
     for index, rec in enumerate(text_recs):
         results[index] = [
@@ -54,10 +64,10 @@ def crnnRec(im, text_recs, ocrMode, adjust=False):
         # 根据ctpn进行识别出的文字区域，进行不同文字区域的crnn识别
         image = Image.fromarray(partImg).convert('L')
         # 进行识别出的文字识别
-        if ocrMode == 'keras':
-           sim_pred = ocr(image)
+        # if ocrMode == 'keras':
+        #    sim_pred = ocr(image)
         if ocrMode == 'pytorch':
-            sim_pred = crnnOcr(image)
+            sim_pred = test.crnn_recognition(image, converter, tmodel) # crnnOcr(image)
 
         results[index].append(sim_pred)  # 识别文字
 
@@ -114,7 +124,7 @@ def model(img, model, adjust=False, detectAngle=False):
     print(img)
     # 进行图像中的文字区域的识别
     t = time.time()
-    text_recs, tmp, img=text_detect(img)
+    text_recs, tmp, img = text_detect(img)
     print('image area recognition finished!')
     print("It takes time:{}s".format(time.time() - t))
     # 识别区域排列

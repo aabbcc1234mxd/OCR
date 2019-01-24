@@ -7,6 +7,7 @@ import random
 # from manager_torch import GPUManager
 import dataset
 # Alphabet = [e.encode('utf-8') for e in alphabet]
+from .models.crnn import CRNN
 import models.crnn as crnn
 import numpy as np
 import torch
@@ -14,7 +15,7 @@ import torch.backends.cudnn as cudnn
 import torch.optim as optim
 import torch.utils.data
 import utils
-from keys import alphabet
+from .keys import alphabet
 from torch.autograd import Variable
 from warpctc_pytorch import CTCLoss
 
@@ -152,7 +153,7 @@ def weights_init(m):
 
 
 # 创建网络模型
-crnn = crnn.CRNN(opt.imgH, nc, nclass, nh, ngpu)
+crnn = CRNN(opt.imgH, nc, nclass, nh, ngpu)
 crnn.apply(weights_init)
 if opt.crnn != '':
     print('loading pretrained model from %s' % opt.crnn)
