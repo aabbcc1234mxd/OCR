@@ -27,17 +27,9 @@ sh setup-python3.sh
 ```
 
 # 模型训练
-* 一共分为3个网络
-* 	**1. 文本方向检测网络-Classify(vgg16)**
+* 一共分为2个网络
 *  **2. 文本区域检测网络-CTPN(CNN+RNN)**
-*  **3. EndToEnd文本识别网络-CRNN(CNN+GRU/LSTM+CTC)**
-
-# 文字方向检测-vgg分类
-```
-基于图像分类，在VGG16模型的基础上，训练0、90、180、270度检测的分类模型.
-详细代码参考angle/predict.py文件，训练图片8000张，准确率88.23%
-```
-模型地址[BaiduCloud](https://pan.baidu.com/s/1zquQNdO0MUsLMsuwxbgPYg)
+*  **3. EndToEnd文本识别网络-CRNN(LSTM+CTC)**
 
 # 文字区域检测CTPN
 支持CPU、GPU环境，一键部署，
@@ -64,9 +56,6 @@ sh setup-python3.sh
 数据集下载完成并解压后，将.ctpn/lib/datasets/pascal_voc.py 文件中的pascal_voc 类中的参数self.devkit_path指向数据集的路径即可
 
 ### 2 对crnn进行训练
-* keras版本 ./train/keras_train/train_batch.py  model_path--指向预训练权重位置 
-MODEL_PATH---指向模型训练保存的位置
-[keras模型预训练权重](https://pan.baidu.com/s/1vTG6-i_bFMWxQ_7xF06usg)
 * pythorch版本./train/pytorch-train/crnn_main.py
 ```
 parser.add_argument(
@@ -98,17 +87,6 @@ parser.add_argument(
 ![ctpn检测2](./test/test_pre.png)
 `===========================================================`
 ![ctpn+crnn结果2](./test/test_result.png)
-
-# 未完待续
-### tensorflow版本crnn，计划尝试当前的各种trick(dropuout,bn,learning_decay等)
-```
-可以看到，对于纯文字的识别结果还是阔以的呢，感觉可以在crnn网络在加以改进，现在的crnn中的cnn有点浅，
-并且rnn层为单层双向+attention，目前正在针对这个地方进行改动，使用迁移学习，以restnet为特征提取层，
-使用多层双向动态rnn+attention+ctc的机制，将模型加深，目前正在进行模型搭建，结果好的话就发上来，不好的话只能凉凉了~~~~
-```
-
-
-
 
 
 ## 参考
